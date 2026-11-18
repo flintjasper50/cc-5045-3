@@ -53,7 +53,7 @@ test('a second run reuses every cached tile', async () => {
 test('export streams a full-size PNG whose size matches the document', async () => {
   const scheduler = makeScheduler({ workers: 2, cacheDir: 'export' });
   const run = await scheduler.run(JOB);
-  const exported = scheduler.exportRun(run);
+  const exported = await scheduler.exportRun(run);
   assert.strictEqual(exported.width, JOB.width);
   assert.strictEqual(exported.height, JOB.height);
   assert.ok(exported.bytes > 100, 'PNG has content');
@@ -63,6 +63,32 @@ test('export streams a full-size PNG whose size matches the document', async () 
   assert.strictEqual(dec.height, JOB.height);
   // Peak memory while exporting is one strip plus one tile, not the document.
   assert.ok(exported.peakMb < (JOB.width * JOB.height * 4) / 1048576 + 1);
+});
+
+test('exported PNG decodes to exactly the assembled tiles, even across flushes', async () => {
+  // Bigger than the writer's 1MB flush threshold so several IDAT chunks are
+  // emitted: they must be fragments of one zlib stream, not separate streams
+  // (a multi-stream file decodes as zeros past the first chunk).
+  const scheduler = makeScheduler({ workers: 2, cacheDir: 'export-big' });
+  const job = { ...JOB, width: 1024, height: 768, tileW: 128, tileH: 128 };
+  const run = await scheduler.run(job);
+  const exported = await scheduler.exportRun(run);
+  const { decodePng } = require('../src/kernel/png');
+  const dec = decodePng(fs.readFileSync(exported.file));
+  assert.strictEqual(dec.width, job.width);
+  assert.strictEqual(dec.height, job.height);
+  for (const t of run.plan.tiles) {
+    const buf = fs.readFileSync(path.join(run.jobDir, 'tiles', t.index + '.bin'));
+    const w = t.crop.x1 - t.crop.x0, h = t.crop.y1 - t.crop.y0;
+    for (let y = 0; y < h; y++) {
+      const row = buf.subarray(y * w * 4, (y + 1) * w * 4);
+      const off = ((t.crop.y0 + y) * job.width + t.crop.x0) * 4;
+      assert.ok(
+        dec.data.subarray(off, off + w * 4).equals(row),
+        `块 #${t.index} 第 ${y} 行与导出 PNG 不一致`,
+      );
+    }
+  }
 });
 
 test('peak node memory is reported even when every tile is cached', async () => {

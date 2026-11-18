@@ -39,9 +39,54 @@ async function boot() {
   $('#kernelVer').textContent = 'kernel ' + state.kernel.version;
   buildSceneSelect();
   buildFilterPalette();
+  buildPackList();
   addFilter('blur');
   bindUI();
   await previewPlan();
+}
+
+// Demo packs archived in the repo: loading one fills the form with the pack's
+// recorded source parameters; the user can still change the tile size before
+// submitting, which is the recompute demonstration.
+function buildPackList() {
+  const wrap = $('#packList');
+  wrap.innerHTML = '';
+  const packs = state.kernel.demoPacks || [];
+  $('#packCount').textContent = packs.length ? `${packs.length} 套` : '无';
+  for (const p of packs) {
+    const card = document.createElement('div');
+    card.className = 'packcard';
+    const ok = p.checks && p.checks.stitchMaxDiff === 0 && p.checks.validCoverage === 'exact';
+    card.innerHTML = `
+      <div class="phead"><b>${p.label || p.id}</b></div>
+      <div class="pmeta">${p.scene} · ${p.width}×${p.height} · 邻域≤${p.maxHalo}px</div>
+      <div class="pmeta">入库分块 ${p.tileSizes.join('/')}px · 拼接差值 ${p.checks ? p.checks.stitchMaxDiff : '?'} · 有效区 ${p.checks ? p.checks.validCoverage : '?'}</div>`;
+    const btn = document.createElement('button');
+    btn.textContent = '载入面板';
+    btn.className = ok ? '' : 'warn';
+    btn.title = ok ? '把示范集的来源参数填入表单' : '示范集自检未通过，仍可按来源参数载入';
+    btn.onclick = () => loadPack(p);
+    card.append(btn);
+    wrap.append(card);
+  }
+  if (!packs.length) wrap.innerHTML = '<div class="hint">demo/ 下未发现示范集，可用 npm run pack 制作。</div>';
+}
+
+function loadPack(p) {
+  $('#scene').value = p.scene;
+  $('#width').value = p.width;
+  $('#height').value = p.height;
+  $('#tileW').value = p.tileSizes[0];
+  $$('#tilePreset button').forEach(x => x.classList.remove('on'));
+  state.filters = p.filters.map(f => {
+    const { type, ...params } = f;
+    return { type, params: { ...params } };
+  });
+  state.image = null;
+  state.record = null;
+  renderFilters();
+  previewPlan();
+  setStatus('ok', `已载入示范集 ${p.id}，可调整分块后提交`);
 }
 
 function buildSceneSelect() {

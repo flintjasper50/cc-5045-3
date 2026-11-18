@@ -68,6 +68,10 @@ function filterScanline(cur, prev, bpp, out, outOff, forcedFilter) {
   bestBuf.copy(out, outOff + 1);
 }
 
+// Streaming PNG writer. All IDAT chunks are fragments of ONE zlib stream:
+// an earlier version deflated each flush separately, producing a multi-stream
+// file that strict decoders reject (and our own decoder read as zeros past
+// the first stream). The deflator is async, so write/end are awaitable.
 class PngWriter {
   constructor(file, width, height, opts = {}) {
     this.file = file;
@@ -89,23 +93,32 @@ class PngWriter {
     ihdr.writeUInt32BE(height, 4);
     ihdr[8] = 8; ihdr[9] = 6; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
     fs.writeSync(this.fd, chunk('IHDR', ihdr));
+    this.deflator = zlib.createDeflate({ level: this.level });
+    this.streamError = null;
+    this.deflator.on('data', (buf) => { fs.writeSync(this.fd, chunk('IDAT', buf)); });
+    this.deflator.on('error', (err) => { this.streamError = err; });
   }
 
-  write(buf) {
+  async write(buf) {
     if (this.bytesIn + buf.length > this.expected) throw new Error('PngWriter: too much pixel data');
     this.pending.push(buf);
     this.bytesIn += buf.length;
     this.pendingBytes += buf.length;
-    if (this.pendingBytes >= 1 << 20) this._flush(false);
+    if (this.pendingBytes >= 1 << 20) await this._flush(false);
   }
 
-  _flush(final) {
+  async _flush(final) {
     if (!this.pending.length) return;
     const raw = Buffer.concat(this.pending, this.pendingBytes);
     this.pending = []; this.pendingBytes = 0;
     const rowBytes = this.width * this.bpp;
     const avail = Math.floor(raw.length / rowBytes);
     const count = final ? Math.min(avail, this.height - this.rowsWritten) : avail;
+    const leftover = raw.subarray(count * rowBytes);
+    if (leftover.length) {
+      this.pending.push(Buffer.from(leftover));
+      this.pendingBytes = leftover.length;
+    }
     if (count <= 0) return;
     const filtered = Buffer.allocUnsafe(count * (rowBytes + 1));
     for (let r = 0; r < count; r++) {
@@ -113,30 +126,44 @@ class PngWriter {
       filterScanline(cur, this.prev, this.bpp, filtered, r * (rowBytes + 1), this.level === 0 ? 0 : null);
       this.prev = cur;
     }
-    const leftover = raw.subarray(count * rowBytes);
-    if (leftover.length) {
-      this.pending.push(Buffer.from(leftover));
-      this.pendingBytes = leftover.length;
-    }
-    const deflated = zlib.deflateSync(filtered, { level: this.level });
-    fs.writeSync(this.fd, chunk('IDAT', deflated));
     this.rowsWritten += count;
+    // Backpressure: pause the producer when the deflator's buffer is full, so
+    // export memory stays one strip, not the whole document.
+    if (!this.deflator.write(filtered)) {
+      await new Promise((resolve, reject) => {
+        const cleanup = () => {
+          this.deflator.off('drain', onDrain);
+          this.deflator.off('error', onError);
+        };
+        const onDrain = () => { cleanup(); resolve(); };
+        const onError = (err) => { cleanup(); reject(err); };
+        this.deflator.once('drain', onDrain);
+        this.deflator.once('error', onError);
+      });
+    }
+    if (this.streamError) throw this.streamError;
   }
 
   // Feed a sub-rectangle of this image (used for streaming strip assembly).
-  writeRect(x, y, w, h, rgba) {
+  async writeRect(x, y, w, h, rgba) {
     const rowBytes = w * 4;
     if (x !== 0 || w !== this.width) throw new Error('PngWriter.writeRect: only full-width strips');
-    for (let r = 0; r < h; r++) this.write(rgba.subarray(r * rowBytes, (r + 1) * rowBytes));
+    for (let r = 0; r < h; r++) await this.write(rgba.subarray(r * rowBytes, (r + 1) * rowBytes));
     if (y !== this.rowsWritten - h) throw new Error('PngWriter.writeRect: out of order strip');
   }
 
-  end() {
-    this._flush(true);
+  async end() {
+    await this._flush(true);
     if (this.rowsWritten !== this.height) {
       fs.closeSync(this.fd);
       throw new Error(`PngWriter: short image ${this.rowsWritten}/${this.height}`);
     }
+    await new Promise((resolve, reject) => {
+      this.deflator.once('end', resolve);
+      this.deflator.once('error', reject);
+      this.deflator.end();
+    });
+    if (this.streamError) throw this.streamError;
     fs.writeSync(this.fd, chunk('IEND', Buffer.alloc(0)));
     fs.closeSync(this.fd);
   }

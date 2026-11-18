@@ -1,0 +1,103 @@
+{
+  "pack": "boundary-pack",
+  "label": "边界素材示范集（细线 + 透明边缘 + 大半径柔光）",
+  "packVersion": 1,
+  "generator": {
+    "name": "make-boundary-pack",
+    "kernel": "k3",
+    "packVersion": 1
+  },
+  "source": {
+    "scene": "boundary",
+    "width": 760,
+    "height": 532,
+    "seed": 4021,
+    "note": "细线(1–2px) + 透明边缘(径向渐隐/半透明精灵) + 大半径柔光；四周 9% 透明外缘，无全幅不透明底。"
+  },
+  "filters": [
+    {
+      "type": "blur",
+      "sigma": 13
+    },
+    {
+      "type": "shadow",
+      "dx": -21,
+      "dy": 27,
+      "sigma": 11,
+      "spread": 5,
+      "color": "#24143a",
+      "opacity": 0.62
+    }
+  ],
+  "validRegion": {
+    "x0": 0,
+    "y0": 0,
+    "x1": 760,
+    "y1": 532
+  },
+  "transparentMargin": {
+    "x": 68,
+    "y": 48
+  },
+  "neighborhood": {
+    "maxHalo": 104,
+    "perFilter": [
+      {
+        "type": "blur",
+        "support": 39
+      },
+      {
+        "type": "shadow",
+        "support": 38
+      }
+    ],
+    "meaning": "每块有效区(crop)之外需要额外计算的邻域宽度，由滤镜支撑沿链反向推导"
+  },
+  "tileSizes": [
+    96,
+    160,
+    224
+  ],
+  "sets": [
+    {
+      "tileSize": 96,
+      "cols": 8,
+      "rows": 6,
+      "tiles": 48,
+      "maxHalo": 104,
+      "dir": "tiles-96"
+    },
+    {
+      "tileSize": 160,
+      "cols": 5,
+      "rows": 4,
+      "tiles": 20,
+      "maxHalo": 104,
+      "dir": "tiles-160"
+    },
+    {
+      "tileSize": 224,
+      "cols": 4,
+      "rows": 3,
+      "tiles": 12,
+      "maxHalo": 104,
+      "dir": "tiles-224"
+    }
+  ],
+  "reference": {
+    "file": "reference.png",
+    "width": 760,
+    "height": 532,
+    "sha256": "08964147edab2d8c3fcdfe24c3ff2f8fb8c582275366a06742106c2fd9bd1a0f"
+  },
+  "checks": {
+    "stitchMaxDiff": 0,
+    "stitchMeanDiff": 0,
+    "boundaryMaxDiff": 0,
+    "validCoverage": "exact",
+    "haloConsistent": true,
+    "rerenderIdentical": true,
+    "verifiedAt": "2026-11-18T15:48:27.844Z"
+  },
+  "createdAt": "2026-11-18T15:48:27.844Z"
+}

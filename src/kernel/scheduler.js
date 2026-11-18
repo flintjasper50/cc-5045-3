@@ -240,7 +240,7 @@ class Scheduler {
   }
 
   // Export: read each tile row-wise, assemble one strip at a time, stream PNG.
-  exportRun(run) {
+  async exportRun(run) {
     const plan = run.plan;
     const W = plan.docRect.x1, H = plan.docRect.y1;
     const outFile = path.join(run.jobDir, 'poster.png');
@@ -263,9 +263,9 @@ class Scheduler {
         }
         peakMb = Math.max(peakMb, (strip.length + buf.length) / 1048576);
       }
-      writer.write(strip);
+      await writer.write(strip);
     }
-    writer.end();
+    await writer.end();
     const bytes = fs.statSync(outFile).size;
     return { file: outFile, peakMb: +peakMb.toFixed(1), bytes, width: W, height: H };
   }

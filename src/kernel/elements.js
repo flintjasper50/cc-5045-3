@@ -77,6 +77,13 @@ function elementBounds(el) {
       const r = el.outer + (el.lineWidth || 0) / 2;
       return { x0: el.cx - r, y0: el.cy - r, x1: el.cx + r, y1: el.cy + r };
     }
+    case 'line': {
+      const hw = (el.width || 1) / 2;
+      return {
+        x0: Math.min(el.x0, el.x1) - hw, y0: Math.min(el.y0, el.y1) - hw,
+        x1: Math.max(el.x0, el.x1) + hw, y1: Math.max(el.y0, el.y1) + hw,
+      };
+    }
     case 'polygon': return bboxOf(el.points);
     case 'text': {
       const m = measureText(el), base = el.baseline || 'alphabetic';
@@ -170,6 +177,18 @@ function drawElementLocal(g, el) {
       g.beginPath();
       el.points.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]));
       g.closePath(); g.fill();
+      g.restore(); return;
+    }
+    case 'line': {
+      g.save();
+      g.strokeStyle = el.color;
+      g.lineWidth = el.width || 1;
+      g.globalAlpha = el.opacity == null ? 1 : el.opacity;
+      g.lineCap = el.cap || 'butt';
+      g.beginPath();
+      g.moveTo(el.x0, el.y0);
+      g.lineTo(el.x1, el.y1);
+      g.stroke();
       g.restore(); return;
     }
     case 'text': {

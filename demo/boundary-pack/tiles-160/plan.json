@@ -1,0 +1,515 @@
+{
+  "tileSize": 160,
+  "cols": 5,
+  "rows": 4,
+  "tiles": 20,
+  "maxHalo": 104,
+  "validRegion": {
+    "x0": 0,
+    "y0": 0,
+    "x1": 760,
+    "y1": 532
+  },
+  "entries": [
+    {
+      "index": 0,
+      "row": 0,
+      "col": 0,
+      "crop": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 160,
+        "y1": 160
+      },
+      "contentRect": {
+        "x0": -56,
+        "y0": -104,
+        "x1": 258,
+        "y1": 210
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0000.bin",
+      "sha256": "502e5c2a2bb368578c1b08ed7a039ef4c6592ebebcca4fe5021a4409aa3d4f40"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "col": 1,
+      "crop": {
+        "x0": 160,
+        "y0": 0,
+        "x1": 320,
+        "y1": 160
+      },
+      "contentRect": {
+        "x0": 104,
+        "y0": -104,
+        "x1": 418,
+        "y1": 210
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0001.bin",
+      "sha256": "ec5705a32c174f4b17969daea3e5ddb745fdaf2f46b4b5c6625ad0bd64934cd4"
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "col": 2,
+      "crop": {
+        "x0": 320,
+        "y0": 0,
+        "x1": 480,
+        "y1": 160
+      },
+      "contentRect": {
+        "x0": 264,
+        "y0": -104,
+        "x1": 578,
+        "y1": 210
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0002.bin",
+      "sha256": "5d34b2a8468e8a130038024a80aa91c2d2b34d2af135bf226f56d496699d29c9"
+    },
+    {
+      "index": 3,
+      "row": 0,
+      "col": 3,
+      "crop": {
+        "x0": 480,
+        "y0": 0,
+        "x1": 640,
+        "y1": 160
+      },
+      "contentRect": {
+        "x0": 424,
+        "y0": -104,
+        "x1": 738,
+        "y1": 210
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0003.bin",
+      "sha256": "819119e6b1394e6331544ebc001068c0e727dc2f7e63ec3a3602fde6efbc82e8"
+    },
+    {
+      "index": 4,
+      "row": 0,
+      "col": 4,
+      "crop": {
+        "x0": 640,
+        "y0": 0,
+        "x1": 760,
+        "y1": 160
+      },
+      "contentRect": {
+        "x0": 584,
+        "y0": -104,
+        "x1": 858,
+        "y1": 210
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0004.bin",
+      "sha256": "ae9e0caf6ee51f4bc19d290bc71774219cb77607747dc2d5146ca8eefb248bb5"
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "col": 0,
+      "crop": {
+        "x0": 0,
+        "y0": 160,
+        "x1": 160,
+        "y1": 320
+      },
+      "contentRect": {
+        "x0": -56,
+        "y0": 56,
+        "x1": 258,
+        "y1": 370
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0005.bin",
+      "sha256": "7a039d28823c46c220f0b9c99816f548fc768a753ebf8f8a25d0961ae50184f7"
+    },
+    {
+      "index": 6,
+      "row": 1,
+      "col": 1,
+      "crop": {
+        "x0": 160,
+        "y0": 160,
+        "x1": 320,
+        "y1": 320
+      },
+      "contentRect": {
+        "x0": 104,
+        "y0": 56,
+        "x1": 418,
+        "y1": 370
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0006.bin",
+      "sha256": "b2931d3720e685fef0edfaa3671cd8f5bcf09164e346092923b2d7b3afff5b4b"
+    },
+    {
+      "index": 7,
+      "row": 1,
+      "col": 2,
+      "crop": {
+        "x0": 320,
+        "y0": 160,
+        "x1": 480,
+        "y1": 320
+      },
+      "contentRect": {
+        "x0": 264,
+        "y0": 56,
+        "x1": 578,
+        "y1": 370
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0007.bin",
+      "sha256": "8a92201df838b46185267fe3a56d0876019aac5b4fa0fb1a98f03340e0fabfc4"
+    },
+    {
+      "index": 8,
+      "row": 1,
+      "col": 3,
+      "crop": {
+        "x0": 480,
+        "y0": 160,
+        "x1": 640,
+        "y1": 320
+      },
+      "contentRect": {
+        "x0": 424,
+        "y0": 56,
+        "x1": 738,
+        "y1": 370
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0008.bin",
+      "sha256": "6330c7f81d8d7ab3aa1d1a4aee5f32db5be11a160d1cdbb61dee701d93046c93"
+    },
+    {
+      "index": 9,
+      "row": 1,
+      "col": 4,
+      "crop": {
+        "x0": 640,
+        "y0": 160,
+        "x1": 760,
+        "y1": 320
+      },
+      "contentRect": {
+        "x0": 584,
+        "y0": 56,
+        "x1": 858,
+        "y1": 370
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0009.bin",
+      "sha256": "a230dd5ebd30e71415796e98ee7d90a713fb76ed031eaacc96c769f9492faa1f"
+    },
+    {
+      "index": 10,
+      "row": 2,
+      "col": 0,
+      "crop": {
+        "x0": 0,
+        "y0": 320,
+        "x1": 160,
+        "y1": 480
+      },
+      "contentRect": {
+        "x0": -56,
+        "y0": 216,
+        "x1": 258,
+        "y1": 530
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0010.bin",
+      "sha256": "f66dc5a9f2719c2f40d5b40f1f960d1a7d702c8420a550af32c9ee9659822373"
+    },
+    {
+      "index": 11,
+      "row": 2,
+      "col": 1,
+      "crop": {
+        "x0": 160,
+        "y0": 320,
+        "x1": 320,
+        "y1": 480
+      },
+      "contentRect": {
+        "x0": 104,
+        "y0": 216,
+        "x1": 418,
+        "y1": 530
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0011.bin",
+      "sha256": "3c01b6f4e477b52fd8e6d23b6e142369874b3b7cbc94e1441ca2d0055ad2b323"
+    },
+    {
+      "index": 12,
+      "row": 2,
+      "col": 2,
+      "crop": {
+        "x0": 320,
+        "y0": 320,
+        "x1": 480,
+        "y1": 480
+      },
+      "contentRect": {
+        "x0": 264,
+        "y0": 216,
+        "x1": 578,
+        "y1": 530
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0012.bin",
+      "sha256": "7afedfbceba47fdf2bb0b67df27fd724d1cb5b547262371f624b55fa3714a7da"
+    },
+    {
+      "index": 13,
+      "row": 2,
+      "col": 3,
+      "crop": {
+        "x0": 480,
+        "y0": 320,
+        "x1": 640,
+        "y1": 480
+      },
+      "contentRect": {
+        "x0": 424,
+        "y0": 216,
+        "x1": 738,
+        "y1": 530
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0013.bin",
+      "sha256": "d2018b1389116851387477f4a762afcb1afee3276f8b4fb157850dfbee0f0404"
+    },
+    {
+      "index": 14,
+      "row": 2,
+      "col": 4,
+      "crop": {
+        "x0": 640,
+        "y0": 320,
+        "x1": 760,
+        "y1": 480
+      },
+      "contentRect": {
+        "x0": 584,
+        "y0": 216,
+        "x1": 858,
+        "y1": 530
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0014.bin",
+      "sha256": "83d8dc2907dfc7d01a99395e70f84fe77512ce508309bbfc3bffe3b7ae6aae29"
+    },
+    {
+      "index": 15,
+      "row": 3,
+      "col": 0,
+      "crop": {
+        "x0": 0,
+        "y0": 480,
+        "x1": 160,
+        "y1": 532
+      },
+      "contentRect": {
+        "x0": -56,
+        "y0": 376,
+        "x1": 258,
+        "y1": 582
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0015.bin",
+      "sha256": "3967b9d5ace02ca8d74e0a18dfaf2a576c75b0ec17aaabcf36940419bda9b042"
+    },
+    {
+      "index": 16,
+      "row": 3,
+      "col": 1,
+      "crop": {
+        "x0": 160,
+        "y0": 480,
+        "x1": 320,
+        "y1": 532
+      },
+      "contentRect": {
+        "x0": 104,
+        "y0": 376,
+        "x1": 418,
+        "y1": 582
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0016.bin",
+      "sha256": "4dd318018fe788b18098092957d9d979b8a5f0b24ad9860b120579be6e9fcef4"
+    },
+    {
+      "index": 17,
+      "row": 3,
+      "col": 2,
+      "crop": {
+        "x0": 320,
+        "y0": 480,
+        "x1": 480,
+        "y1": 532
+      },
+      "contentRect": {
+        "x0": 264,
+        "y0": 376,
+        "x1": 578,
+        "y1": 582
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0017.bin",
+      "sha256": "7289331eafc104af4589a7f577532696f0ee55602ac98e459b332d1d74e4a12a"
+    },
+    {
+      "index": 18,
+      "row": 3,
+      "col": 3,
+      "crop": {
+        "x0": 480,
+        "y0": 480,
+        "x1": 640,
+        "y1": 532
+      },
+      "contentRect": {
+        "x0": 424,
+        "y0": 376,
+        "x1": 738,
+        "y1": 582
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0018.bin",
+      "sha256": "86a4d2641f413e8d4db45c34548b0413ec335479adde8893f036200294dd1732"
+    },
+    {
+      "index": 19,
+      "row": 3,
+      "col": 4,
+      "crop": {
+        "x0": 640,
+        "y0": 480,
+        "x1": 760,
+        "y1": 532
+      },
+      "contentRect": {
+        "x0": 584,
+        "y0": 376,
+        "x1": 858,
+        "y1": 582
+      },
+      "halo": {
+        "left": 56,
+        "top": 104,
+        "right": 98,
+        "bottom": 50
+      },
+      "file": "tile-0019.bin",
+      "sha256": "6ff8f6b727059f863d7966019ad051b35611067098c3ee83d2d4a4c382a6252a"
+    }
+  ]
+}

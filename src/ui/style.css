@@ -105,6 +105,12 @@ input[type=number]:focus,select:focus,input[type=text]:focus{border-color:var(--
 .memgrid b:has(.warn){text-align:left}
 .memgrid .warnv{color:var(--accent2)}
 .warn{color:var(--accent2);font-size:11px;margin-top:6px}
+.packcard{border:1px solid var(--line);border-radius:8px;background:var(--panel2);padding:8px 10px;margin-bottom:8px}
+.packcard .phead{font-size:12px;font-weight:650;margin-bottom:3px}
+.packcard .pmeta{font:10.5px var(--mono);color:var(--muted);line-height:1.6}
+.packcard button{margin-top:7px;background:#12202a;border:1px solid var(--line2);color:var(--text);border-radius:6px;padding:4px 12px;font:11px var(--mono);cursor:pointer}
+.packcard button:hover{border-color:var(--accent);color:var(--accent)}
+.packcard button.warn{border-color:var(--accent2);color:var(--accent2)}
 .note{border-left:2px solid var(--accent);padding:2px 0 2px 9px;color:var(--muted);font-size:11.5px;line-height:1.65;margin:10px 0}
 code{font:11px var(--mono);color:var(--text);background:#0c141c;padding:1px 4px;border-radius:3px}
 .modal{position:fixed;inset:0;background:rgba(3,6,9,.75);display:grid;place-items:center;z-index:50;backdrop-filter:blur(3px)}

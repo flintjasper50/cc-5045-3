@@ -191,11 +191,52 @@ function gridScene(docW, docH) {
   return { id: 'grid', width: W, height: H, elements: els };
 }
 
-const SCENE_BUILDERS = { aurora: auroraScene, grid: gridScene };
+// Boundary-material scene: fine lines, alpha-faded edges and wide-radius glows
+// on a transparent outer margin. There is no full-bleed opaque background, so
+// the filtered output proves halo propagation across tiles *and* across the
+// transparent outer edge. Everything is positioned by document ratio, so any
+// document size reproduces the same material.
+function boundaryScene(docW, docH) {
+  const W = docW, H = docH, u = Math.min(W, H);
+  const els = [];
+  // Central texture island: the outer ~9% stays fully transparent on purpose.
+  const mx = Math.round(W * 0.09), my = Math.round(H * 0.09);
+  els.push({
+    type: 'texture', id: 'core',
+    rect: { x: mx, y: my, w: W - 2 * mx, h: H - 2 * my },
+    colors: ['#0d1b2e', '#274b63'], accent: '#e0fbfc',
+    freq: 0.0024, contrast: 0.62, accentStrength: 0.4,
+    dotStep: 34, dotRadius: 7, dotStrength: 0.16, dotColor: '#ffe8d6',
+    grain: 0.04, bands: 7, seed: 4021,
+  });
+  // Wide-radius glows: their blur support spans several tiles.
+  els.push({ type: 'circle', id: 'glowA', cx: W * 0.30, cy: H * 0.36, r: u * 0.30, glow: ['rgba(255,170,102,0.55)', 'rgba(255,170,102,0)'] });
+  els.push({ type: 'circle', id: 'glowB', cx: W * 0.72, cy: H * 0.66, r: u * 0.26, glow: ['rgba(112,214,255,0.50)', 'rgba(112,214,255,0)'] });
+  // Alpha-edge material: a disc fading to zero alpha and a thin soft ring.
+  els.push({ type: 'circle', id: 'disc', cx: W * 0.70, cy: H * 0.30, r: u * 0.13, glow: ['rgba(255,96,122,0.90)', 'rgba(255,96,122,0)'] });
+  els.push({ type: 'ring', id: 'orbit', cx: W * 0.70, cy: H * 0.30, r: u * 0.185, width: Math.max(1.5, u * 0.004), color: '#ffd6e0', opacity: 0.5 });
+  // Fine lines (1–2px) crossing the whole document, including the transparent
+  // margin, so every grid slices them and any seam would be visible.
+  const lw1 = Math.max(1, u * 0.0016), lw2 = Math.max(1.5, u * 0.0028);
+  els.push({ type: 'line', id: 'h1', x0: 0, y0: H * 0.185, x1: W, y1: H * 0.185, width: lw1, color: '#f4f1de', opacity: 0.85 });
+  els.push({ type: 'line', id: 'h2', x0: 0, y0: H * 0.519, x1: W, y1: H * 0.519, width: lw2, color: '#81f4e1', opacity: 0.70 });
+  els.push({ type: 'line', id: 'v1', x0: W * 0.315, y0: 0, x1: W * 0.315, y1: H, width: lw1, color: '#f4f1de', opacity: 0.80 });
+  els.push({ type: 'line', id: 'v2', x0: W * 0.772, y0: 0, x1: W * 0.772, y1: H, width: lw1, color: '#ffa8a9', opacity: 0.65 });
+  els.push({ type: 'line', id: 'diag', x0: W * 0.04, y0: H * 0.92, x1: W * 0.96, y1: H * 0.07, width: lw2, color: '#ffffff', opacity: 0.60 });
+  // Transparent PNG sprites add photographic alpha edges.
+  els.push({ type: 'sprite', id: 'orb', asset: 'orb', x: W * 0.47, y: H * 0.55, w: u * 0.24, rotate: 0.18, opacity: 0.95 });
+  els.push({ type: 'sprite', id: 'ribbon', asset: 'ribbon', x: W * 0.55, y: H * 0.85, w: u * 0.40, rotate: -0.10, opacity: 0.85 });
+  const t = Math.round(u * 0.075);
+  els.push({ type: 'text', id: 'tag', text: 'BOUNDARY', x: W * 0.06, y: H * 0.16, size: t, weight: 700, color: '#f8fff9', opacity: 0.95 });
+  els.push({ type: 'text', id: 'tag2', text: 'FINE LINES / ALPHA EDGES / WIDE SUPPORT', x: W * 0.062, y: H * 0.16 + t * 0.9, size: Math.round(u * 0.020), weight: 400, color: '#bfe3d9', opacity: 0.85 });
+  return { id: 'boundary', width: W, height: H, elements: els };
+}
+
+const SCENE_BUILDERS = { aurora: auroraScene, grid: gridScene, boundary: boundaryScene };
 const ASSETS = { orb: 'orb.png', gem: 'gem.png', ribbon: 'ribbon.png' };
 
 module.exports = {
-  auroraScene, gridScene, SCENE_BUILDERS, ASSETS, preloadSprites,
+  auroraScene, gridScene, boundaryScene, SCENE_BUILDERS, ASSETS, preloadSprites,
   renderContent, paintTexture, elementPatchBounds, setPatchCache, getPatchCache,
   ASSET_DIR, PatchCache,
 };

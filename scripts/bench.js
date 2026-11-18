@@ -56,7 +56,7 @@ async function main() {
   const run = await scheduler.run(job, {
     onPlan: (p, st) => console.log(`  计划: ${p.tiles} 块 ${p.cols}×${p.rows}, 最大邻域 ${p.maxHalo}px, 待算 ${st.missing}`),
   });
-  const exportInfo = scheduler.exportRun(run);
+  const exportInfo = await scheduler.exportRun(run);
   const rss = process.memoryUsage().rss;
   const rec = {
     document: `${job.width}×${job.height}`,

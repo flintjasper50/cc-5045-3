@@ -26,7 +26,33 @@ let seq = 0;
 const SCENES = [
   { id: 'grid', label: 'SUPERSCALE（网点 + 轨道）', note: '高对比网点，最容易暴露分块接缝' },
   { id: 'aurora', label: 'AURORA（柔光 + 星形）', note: '大范围柔光与渐变，检查模糊截断' },
+  { id: 'boundary', label: '边界素材（细线 + 透明边缘 + 大半径）', note: '1–2px 细线、渐隐透明边、大半径柔光，四周透明外缘' },
 ];
+
+// Demo packs archived under demo/: the panel loads their source parameters
+// straight from each manifest, so the pack is a runnable resource, not a
+// screenshot. Scanning is cheap (small JSON files) and always current.
+function demoPacks() {
+  const dir = path.join(ROOT, 'demo');
+  const out = [];
+  let names = [];
+  try { names = fs.readdirSync(dir); } catch (_) { return out; }
+  for (const name of names) {
+    const file = path.join(dir, name, 'manifest.json');
+    try {
+      const m = JSON.parse(fs.readFileSync(file, 'utf8'));
+      if (!m.source || !m.filters) continue;
+      out.push({
+        id: m.pack, label: m.label, dir: 'demo/' + name,
+        scene: m.source.scene, width: m.source.width, height: m.source.height,
+        filters: m.filters, tileSizes: m.tileSizes,
+        validRegion: m.validRegion, maxHalo: m.neighborhood && m.neighborhood.maxHalo,
+        checks: m.checks,
+      });
+    } catch (_) { /* a broken manifest must not break the panel */ }
+  }
+  return out;
+}
 
 function json(res, code, body) {
   const buf = Buffer.from(JSON.stringify(body));
@@ -59,6 +85,7 @@ function kernelDescriptor() {
       params: Object.entries(f.params).map(([key, p]) => ({ key, ...p })),
     })),
     scenes: SCENES,
+    demoPacks: demoPacks(),
     limits: {
       maxTiles: require('../kernel/pipeline').MAX_TILES,
       minTile: 16, maxTile: 8192,
@@ -127,7 +154,7 @@ async function handleRun(req, res) {
   }
 
   let exported;
-  try { exported = scheduler.exportRun(run); }
+  try { exported = await scheduler.exportRun(run); }
   catch (err) {
     send('error', { message: '导出失败: ' + err.message });
     res.end();
