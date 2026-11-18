@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEGAPOSTER · 分块滤镜任务面板</title>
+<link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="side-head">
+      <div class="brand"><h1>MEGAPOSTER</h1><span class="v" id="kernelVer">…</span></div>
+      <p class="sub">分块滤镜出图任务 · 控件由内核参数表生成</p>
+      <p class="sub"><a href="#" id="howto" style="color:var(--accent)">怎样启动界面？</a></p>
+    </div>
+    <div class="scroll" id="sideScroll">
+      <div class="section">
+        <h2>画幅与网格 <span class="tag" id="gridTag"></span></h2>
+        <div class="row"><label>场景</label><select id="scene"></select></div>
+        <div class="row"><label>宽 × 高</label>
+          <input id="width" type="number" min="64" max="24000" step="1" value="2048">
+          <input id="height" type="number" min="64" max="24000" step="1" value="1536">
+        </div>
+        <div class="row"><label>分块边长</label>
+          <input id="tileW" type="number" min="16" max="8192" step="1" value="256">
+          <span class="unit">px</span>
+        </div>
+        <div class="seg" id="tilePreset">
+          <button data-t="64">64</button>
+          <button data-t="128">128</button>
+          <button data-t="256" class="on">256</button>
+          <button data-t="512">512</button>
+        </div>
+        <div class="presets" id="scenePresets">
+          <button data-preset="small">小样 1024²</button>
+          <button data-preset="mid">展示 4096×3072</button>
+          <button data-preset="poster">超大 12000×9000</button>
+        </div>
+        <p class="hint" id="gridHint">改变分块只改变网格与邻域，不改变画面像素。</p>
+      </div>
+
+      <div class="section">
+        <h2>滤镜链 <span class="tag" id="filterCount"></span></h2>
+        <div class="filters" id="filters"></div>
+        <div class="addf" id="addFilters"></div>
+        <p class="hint">邻域半径由内核从滤镜支撑自动推导；滑块范围来自内核。</p>
+      </div>
+
+      <div class="section">
+        <h2>故障演练 <span class="tag">可选</span></h2>
+        <div class="row"><label>注入失败块</label>
+          <input id="failInject" type="text" placeholder="例如 3,7 （首次必失败）">
+        </div>
+        <p class="hint">这些块第一次执行会抛错，用于验证“只重做缺失块”。</p>
+      </div>
+
+      <div class="actions">
+        <button id="previewBtn">预演网格</button>
+        <button id="runBtn" class="run">提交出图</button>
+      </div>
+      <div class="hint" id="runHint">提交后：工作节点只渲染各自分配的区域，主进程逐块流式拼装导出。</div>
+      <div id="errorBox" class="errbox hidden"></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="status"><span class="dot" id="dot"></span><span id="statusText">尚未提交任务</span></div>
+      <div class="progress"><i id="prog"></i></div>
+      <div class="meta" id="progressMeta">—</div>
+      <div class="meta" id="gridMeta">—</div>
+    </div>
+    <div class="content">
+      <section class="viewer" id="viewer">
+        <div class="stage" id="stage">
+          <div class="placeholder" id="placeholder">
+            <b>提交一个出图任务</b><br>
+            左侧参数由分块滤镜内核提供。结果区将呈现大图拼接、每块实际计算范围与边界差值。
+          </div>
+        </div>
+        <div class="zoombar">
+          <span>缩放</span>
+          <button data-z="fit" class="on">适应</button>
+          <button data-z="1">1×</button>
+          <button data-z="2">2×</button>
+          <button data-z="4">4×</button>
+          <button data-z="8">8×</button>
+          <span id="cursorPos">—</span>
+        </div>
+        <div class="legend" id="legend">
+          <div><span class="sw" style="background:#38d9b5"></span>块裁剪框（实际输出）</div>
+          <div><span class="sw" style="background:#f0b53d"></span>计算范围（含邻域）</div>
+          <div><span class="sw" style="background:#ff6b6b"></span>选中块</div>
+        </div>
+      </section>
+
+      <aside class="rightpanel">
+        <div class="tabs" id="tabs">
+          <button data-tab="result" class="on">结果</button>
+          <button data-tab="tiles">分块</button>
+          <button data-tab="memory">内存</button>
+          <button data-tab="events">事件</button>
+        </div>
+        <div class="tabbody" id="tabResult">
+          <div class="h3">跨网格边缘误差</div>
+          <div id="gridCmp" class="hint">用当前滤镜链把同一画面按 64/128/256/512 分块渲染，边界带与整幅参照逐像素比较。</div>
+          <div class="row" style="margin-top:7px">
+            <button id="gridCmpBtn" style="background:var(--panel2);border:1px solid var(--line2);color:var(--text);border-radius:6px;padding:5px 10px;cursor:pointer;font:11.5px var(--mono)">对比不同网格</button>
+            <span class="hint" style="margin:0">画幅需 ≤ 4096²</span>
+          </div>
+          <div class="h3">边界差值</div>
+          <div id="refSummary" class="hint">提交后显示拼接结果与整幅参照的逐像素差。</div>
+          <div class="cmp hidden" id="cmpWrap">
+            <figure><img id="cmpPoster" alt="拼接结果裁剪"><figcaption><span>拼接结果</span><span id="cmpPosterCap"></span></figcaption></figure>
+            <figure><img id="cmpRef" alt="整幅参照裁剪"><figcaption><span>整幅参照</span><span id="cmpRefCap"></span></figcaption></figure>
+          </div>
+          <div class="heatbar"></div>
+          <div id="diffList" class="hint"></div>
+          <div class="h3">每块实际计算范围</div>
+          <div id="rangeTable" class="hint">预演网格后列出。</div>
+        </div>
+        <div class="tabbody hidden" id="tabTiles">
+          <div class="hint" id="tilesHint">每块可点击，在画布上高亮其输出框与计算范围。</div>
+          <div style="max-height:100%;overflow:auto"><table class="tiletable" id="tileTable"></table></div>
+        </div>
+        <div class="tabbody hidden" id="tabMemory">
+          <div class="h3">导出与内存记录</div>
+          <div class="memgrid" id="memGrid"><span>尚未运行</span><b>—</b></div>
+          <div class="h3">缓存</div>
+          <div class="memgrid" id="cacheGrid"><span>尚未运行</span><b>—</b></div>
+          <p class="note">主进程不加载整幅像素：导出一行一条带，节点只写自己块的 <code>.bin</code>。</p>
+        </div>
+        <div class="tabbody hidden" id="tabEvents">
+          <div class="h3">节点事件</div>
+          <div class="events" id="events">—</div>
+          <div class="h3">失败反馈</div>
+          <div id="failures" class="hint">无</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+<script src="/ui/app.js"></script>
+</body>
+</html>
